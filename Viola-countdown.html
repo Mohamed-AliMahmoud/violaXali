@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Countdown Timer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 5%;
+    }
+    #timer {
+      font-size: 3rem;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="headline">Lade…</h1>
+  <div id="timer">––:––:––:––</div>
+
+  <script>
+    // URL-Parameter auslesen
+    function getParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name);
+    }
+
+    // Titel und Datum auslesen
+    const titleParam = getParam('title') || 'Dein Titel hier';
+    const dateParam = getParam('date');
+
+    document.getElementById('headline').textContent = decodeURIComponent(titleParam);
+
+    if (!dateParam) {
+      document.getElementById('timer').textContent = 'Kein &quot;date&quot;-Parameter in der URL.';
+    } else {
+      const targetTime = new Date(dateParam).getTime();
+
+      function updateTimer() {
+        const now = Date.now();
+        const diff = targetTime - now;
+
+        if (diff <= 0) {
+          document.getElementById('timer').textContent = 'Die Zeit ist abgelaufen!';
+          clearInterval(interval);
+          return;
+        }
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / (1000 * 60)) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+
+        document.getElementById('timer').textContent =
+          String(days).padStart(2,'0') + 'd ' +
+          String(hours).padStart(2,'0') + 'h ' +
+          String(minutes).padStart(2,'0') + 'm ' +
+          String(seconds).padStart(2,'0') + 's';
+      }
+
+      updateTimer();
+      const interval = setInterval(updateTimer, 1000);
+    }
+  </script>
+</body>
+</html>
